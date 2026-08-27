@@ -15,8 +15,13 @@ TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 git clone --quiet "$A" "$TMP/a"
 git clone --quiet "$B" "$TMP/b"
 
-NAME_A=$(node -p "require('$TMP/a/lineage.json').name")
-NAME_B=$(node -p "require('$TMP/b/lineage.json').name")
+# git resolves the POSIX path mktemp returns; node is a native binary and on
+# Git Bash for Windows cannot. Hand node a path it can open. Elsewhere cygpath
+# is absent and $TMP is already usable, so this is a no-op.
+TMPN=$(cygpath -m "$TMP" 2>/dev/null || printf '%s' "$TMP")
+
+NAME_A=$(node -p "require('$TMPN/a/lineage.json').name")
+NAME_B=$(node -p "require('$TMPN/b/lineage.json').name")
 
 # --- the species barrier -------------------------------------------------
 if ! diff -rq "$TMP/a/core" "$TMP/b/core" >/dev/null; then
@@ -80,7 +85,12 @@ fs.writeFileSync("self/inheritance.md", ref);
 fs.writeFileSync("self/voice.md", fs.readFileSync(a+"/self/voice.md","utf8")
   .replace(/^>.*$/gm, ">"));
 fs.writeFileSync("log.md", `# Log\n\n# ${new Date().toISOString().slice(0,10)}\nBorn of ${A.name} and ${B.name}. Merge ${merge.slice(0,8)}.\n`);
-' "$TMP/a" "$TMP/b" "$MERGE"
+' "$TMPN/a" "$TMPN/b" "$MERGE"
+
+# self/ is the child's own. Anything else parent A happened to keep there --
+# portraits, appearance notes -- is the parent's, and a character that does not
+# exist yet cannot arrive already wearing its mother's face.
+find self -type f ! -name character.md ! -name voice.md ! -name inheritance.md -delete
 
 git add -A >/dev/null && git commit --quiet -m "child scaffold: sheet blank, inheritance undeclared"
 
