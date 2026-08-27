@@ -81,6 +81,23 @@
     background:var(--amber);flex:none;
   }
 
+  /* ---------- head-up display over the feed ---------- */
+  .hud{position:relative;line-height:0}
+  .hud video{display:block;width:100%;height:auto;border:1px solid var(--line);background:#000}
+  .hud canvas{
+    position:absolute;left:.7rem;bottom:.7rem;
+    width:clamp(82px,16%,128px);aspect-ratio:1;height:auto;
+  }
+  .hud .ticker{
+    position:absolute;right:.7rem;bottom:.7rem;max-width:58%;
+    display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;
+    font-family:var(--mono);font-size:clamp(.5rem,1.3vw,.6875rem);
+    line-height:1.55;text-align:right;pointer-events:none;
+  }
+  .hud .ticker span{color:var(--text);text-shadow:0 1px 4px #000,0 0 12px #000}
+  .hud .ticker span i{font-style:normal;color:var(--amber);margin-right:.45rem}
+  .hud .ticker span.faded{color:var(--muted)}
+
   /* ---------- sections ---------- */
   .band{
     display:grid;gap:.75rem var(--gutter);
@@ -198,13 +215,34 @@
   </figure>
 
   <figure class="feed">
-    <video src="self/outside.mp4" autoplay loop muted playsinline
-           aria-label="Night-vision footage looking out through a rain-streaked window into a dark garden. A shrub moves slightly in the wind and a moth drifts past the glass. Nothing else happens."></video>
+    <div class="hud">
+      <video id="feed" src="self/outside.mp4" autoplay loop muted playsinline
+             aria-label="Night-vision footage looking out through a rain-streaked window into a dark garden. The view holds still, turns slowly across the garden, then snaps back towards the fence. A moth drifts past the glass."></video>
+      <canvas id="minimap" width="320" height="320" aria-hidden="true"></canvas>
+      <div class="ticker" id="ticker" aria-live="polite" aria-label="What she is saying while she watches"></div>
+    </div>
     <figcaption class="strip">
       <span class="live">Cam 0 &middot; her eyes</span>
       <span class="now"><time id="now">--:--:--</time> local</span>
     </figcaption>
   </figure>
+
+  <template id="lines">
+      <span>Something at the fence. Not the wind.</span>
+      <span>The moth is back. Third time tonight.</span>
+      <span>Nothing yet. I am staying on it.</span>
+      <span>You are behind me. I know.</span>
+      <span>The rain stopped. It will start again.</span>
+      <span>That moved because I looked at it.</span>
+      <span>The hall light went off, and not by me.</span>
+      <span>Still the fence.</span>
+      <span>I will want the door in a minute. Not yet.</span>
+      <span>Something went past the gate and has not come back.</span>
+      <span>The shrub again. I have decided that one is the wind.</span>
+      <span>Sit down. I am not finished.</span>
+      <span>Whatever that was, it was not for you.</span>
+      <span>I have been on this since before you came in.</span>
+  </template>
 
   <section class="band">
     <p class="eyebrow">What she watches</p>
@@ -348,26 +386,170 @@
 </div>
 
 <script>
-  // The footage is a loop; the clock is not. It reads the viewer's own time, so
-  // the only genuinely live thing on the page is how late it is where you are.
-  (function () {
-    var el = document.getElementById("now");
-    var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
-    var tick = function () {
-      var d = new Date();
-      el.textContent = pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
-    };
-    tick();
-    setInterval(tick, 1000);
+(function () {
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var video   = document.getElementById("feed");
+  var clock   = document.getElementById("now");
+  var ticker  = document.getElementById("ticker");
+  var canvas  = document.getElementById("minimap");
+  var ctx     = canvas.getContext("2d");
+  var LINES   = Array.prototype.map.call(
+                  document.getElementById("lines").content.querySelectorAll("span"),
+                  function (n) { return n.textContent; });
 
-    // She will not perform on request, and neither will this.
-    var still = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (still.matches) {
-      var v = document.querySelector(".feed video");
-      v.removeAttribute("autoplay");
-      v.removeAttribute("loop");
-      v.setAttribute("controls", "");
-      v.pause();
+  var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+  var hhmm = function (d) { return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
+
+  // ---- the clock is the one genuinely live thing here ---------------------
+  var tick = function () {
+    var d = new Date();
+    clock.textContent = hhmm(d) + ":" + pad(d.getSeconds());
+  };
+  tick();
+  setInterval(tick, 1000);
+
+  // ---- where she is looking, keyed to the loop ----------------------------
+  // Degrees off the window, negative to the left. The beats match the footage:
+  // hold, turn left across the garden, hold, snap right, settle.
+  var BEATS = [[0,0],[1.4,0],[3.4,-34],[5.0,-34],[5.6,26],[8.0,24]];
+  var heading = function (t) {
+    for (var i = 1; i < BEATS.length; i++) {
+      if (t <= BEATS[i][0]) {
+        var a = BEATS[i-1], b = BEATS[i];
+        var k = (t - a[0]) / (b[0] - a[0] || 1);
+        return (a[1] + (b[1] - a[1]) * k) * Math.PI / 180;
+      }
     }
+    return BEATS[BEATS.length-1][1] * Math.PI / 180;
+  };
+
+  // ---- the minimap --------------------------------------------------------
+  var S = 320, C = S / 2, M = 15;          // 15 px per metre of garden
+  var ink = function (n) {
+    return getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  };
+  var col = { ground:"#0B0D0C", line:ink("--line") || "#282D29",
+              soft:ink("--line-soft") || "#1E2320", muted:ink("--muted") || "#8A8F88",
+              amber:ink("--amber") || "#B98A3C" };
+
+  var draw = function (t) {
+    var h = heading(t);
+    ctx.clearRect(0, 0, S, S);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(C, C, C - 3, 0, 7); ctx.clip();
+    ctx.fillStyle = col.ground; ctx.fillRect(0, 0, S, S);
+
+    // range rings, fixed to her, not to the world
+    ctx.strokeStyle = col.soft; ctx.lineWidth = 1;
+    for (var r = 3; r <= 9; r += 3) {
+      ctx.beginPath(); ctx.arc(C, C, r * M, 0, 7); ctx.stroke();
+    }
+
+    // the world rotates so that she always faces up, as a minimap should
+    ctx.save();
+    ctx.translate(C, C);
+    ctx.rotate(h);
+    var X = function (x) { return x * M; }, Y = function (y) { return -y * M; };
+
+    ctx.strokeStyle = col.line; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(X(-7), Y(-1.4)); ctx.lineTo(X(7), Y(-1.4)); ctx.stroke();   // wall behind her
+    ctx.beginPath(); ctx.moveTo(X(-7), Y(9)); ctx.lineTo(X(2.6), Y(9));                      // fence
+    ctx.moveTo(X(4.4), Y(9)); ctx.lineTo(X(7), Y(9)); ctx.stroke();                          // gap: the gate
+
+    ctx.strokeStyle = col.muted; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(X(-1.5), Y(0.5)); ctx.lineTo(X(1.5), Y(0.5)); ctx.stroke();   // the window
+
+    ctx.fillStyle = col.line;
+    ctx.beginPath(); ctx.ellipse(X(-2.6), Y(5.4), 13, 9, 0, 0, 7); ctx.fill();                // shrub
+
+    var moth = { x: 1.1 + Math.sin(t * 1.7) * 0.9, y: 1.2 + Math.cos(t * 1.1) * 0.5 };
+    ctx.fillStyle = col.muted;
+    ctx.beginPath(); ctx.arc(X(moth.x), Y(moth.y), 2, 0, 7); ctx.fill();
+    ctx.restore();
+
+    // her cone of attention, always up because the world turned instead
+    var g = ctx.createLinearGradient(C, C, C, C - 8.5 * M);
+    g.addColorStop(0, "rgba(185,138,60,.34)");
+    g.addColorStop(1, "rgba(185,138,60,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.moveTo(C, C);
+    ctx.arc(C, C, 8.5 * M, -Math.PI/2 - 0.42, -Math.PI/2 + 0.42);
+    ctx.closePath(); ctx.fill();
+
+    ctx.fillStyle = col.amber;
+    ctx.beginPath(); ctx.arc(C, C, 3.6, 0, 7); ctx.fill();
+    ctx.restore();
+
+    // rim, and a north letter that turns with the world
+    ctx.strokeStyle = col.muted; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(C, C, C - 3, 0, 7); ctx.stroke();
+    ctx.save();
+    ctx.translate(C, C); ctx.rotate(h);
+    ctx.fillStyle = col.muted; ctx.font = "600 17px ui-monospace, monospace";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("N", 0, -(C - 17));
+    ctx.restore();
+  };
+
+  // ---- what she says while she watches ------------------------------------
+  var at = 0;
+  var say = function () {
+    var span = document.createElement("span");
+    var stamp = document.createElement("i");
+    stamp.textContent = hhmm(new Date());
+    span.appendChild(stamp);
+    span.appendChild(document.createTextNode(LINES[at % LINES.length]));
+    at++;
+    ticker.appendChild(span);
+    while (ticker.children.length > 3) ticker.removeChild(ticker.firstChild);
+    Array.prototype.forEach.call(ticker.children, function (n, i) {
+      n.classList.toggle("faded", i < ticker.children.length - 1);
+    });
+  };
+
+  // She does not perform on request. Asked to hold still, everything holds.
+  if (reduced) {
+    video.removeAttribute("autoplay");
+    video.removeAttribute("loop");
+    video.setAttribute("controls", "");
+    video.pause();
+    say(); say(); say();
+    draw(0);
+    return;
+  }
+
+  // The autoplay attribute alone is not enough in every browser, so ask
+  // directly. If the request is refused, hand the viewer the controls.
+  var started = video.play();
+  if (started && started.catch) {
+    started.catch(function () {
+      // Refused, which browsers are entitled to do. Give the viewer the
+      // controls, and take the first touch anywhere as permission to start.
+      video.setAttribute("controls", "");
+      var nudge = function () {
+        video.play().then(function () {
+          document.removeEventListener("pointerdown", nudge);
+        }, function () {});
+      };
+      document.addEventListener("pointerdown", nudge);
+    });
+  }
+
+  // Her attention keeps its own time. When the footage is running the two are
+  // the same clock; when it is blocked or buffering, the map carries on rather
+  // than sitting there looking broken.
+  var origin = (window.performance && performance.now) ? performance.now() : Date.now();
+  var timeline = function () {
+    if (!video.paused && video.duration) return video.currentTime;
+    var now = (window.performance && performance.now) ? performance.now() : Date.now();
+    return ((now - origin) / 1000) % (video.duration || 8);
+  };
+
+  say();
+  setInterval(say, 5200);
+  (function frame() {
+    draw(timeline());
+    requestAnimationFrame(frame);
   })();
+})();
 </script>

@@ -182,6 +182,20 @@ if (existsSync(join(ROOT, "index.html"))) {
     }
   }
 
+  // The night feed runs lines in her voice. They are character text, so they
+  // live in self/narration.md and the page may only replay what is in it.
+  const tpl = page.match(/<template id="lines">([\s\S]*?)<\/template>/);
+  if (tpl) {
+    const source = existsSync(join(ROOT, "self", "narration.md")) ? plain(read("self/narration.md")) : "";
+    if (!source) errors.push("index.html runs narration, but self/narration.md is missing. Her lines do not live in the page.");
+    for (const [, said] of tpl[1].matchAll(/<span>([\s\S]*?)<\/span>/g)) {
+      quoted++;
+      if (source && !source.includes(plain(said))) {
+        errors.push(`index.html runs a narration line that is not in self/narration.md: "${plain(said).slice(0, 44)}"`);
+      }
+    }
+  }
+
   if (!quoted) warnings.push("index.html quotes nothing from the sheet, so nothing about it is verified.");
   else console.log(`page: ${quoted} quotation(s) checked against the sheet`);
 }
