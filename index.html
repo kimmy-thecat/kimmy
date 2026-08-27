@@ -66,6 +66,21 @@
     text-transform:uppercase;color:var(--dim);
   }
 
+  /* ---------- the live feed ---------- */
+  .feed{margin:2.5rem 0 0;display:flex;flex-direction:column;gap:.6rem}
+  .feed video{display:block;width:100%;height:auto;border:1px solid var(--line);background:#000}
+  .feed .strip{
+    display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+    font-family:var(--mono);font-size:.6875rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--dim);
+  }
+  .feed .now{color:var(--muted);font-variant-numeric:tabular-nums}
+  .feed .live{display:inline-flex;align-items:center;gap:.45rem;color:var(--muted)}
+  .feed .live::before{
+    content:"";width:.4rem;height:.4rem;border-radius:50%;
+    background:var(--amber);flex:none;
+  }
+
   /* ---------- sections ---------- */
   .band{
     display:grid;gap:.75rem var(--gutter);
@@ -181,6 +196,23 @@
       <span>Left ear folded. She has declined repairs.</span>
     </figcaption>
   </figure>
+
+  <figure class="feed">
+    <video src="self/outside.mp4" autoplay loop muted playsinline
+           aria-label="Night-vision footage looking out through a rain-streaked window into a dark garden. A shrub moves slightly in the wind and a moth drifts past the glass. Nothing else happens."></video>
+    <figcaption class="strip">
+      <span class="live">Cam 0 &middot; her eyes</span>
+      <span class="now"><time id="now">--:--:--</time> local</span>
+    </figcaption>
+  </figure>
+
+  <section class="band">
+    <p class="eyebrow">What she watches</p>
+    <div class="body">
+      <p>The other camera is the one she is actually using, and it is pointed away from you. It has been pointed at the garden for as long as anyone has bothered to check. Rain, a fence, a shrub that moves when the wind does, and a moth that keeps coming back to the glass.</p>
+      <p>Asked what she has been doing, she reports that something moved outside about an hour ago and she has been on it since. This is that. She does not consider it a small thing, and she is not going to be talked out of it.</p>
+    </div>
+  </section>
 
   <section class="band">
     <p class="eyebrow">What she is</p>
@@ -314,3 +346,28 @@
   </footer>
 
 </div>
+
+<script>
+  // The footage is a loop; the clock is not. It reads the viewer's own time, so
+  // the only genuinely live thing on the page is how late it is where you are.
+  (function () {
+    var el = document.getElementById("now");
+    var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+    var tick = function () {
+      var d = new Date();
+      el.textContent = pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+    };
+    tick();
+    setInterval(tick, 1000);
+
+    // She will not perform on request, and neither will this.
+    var still = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (still.matches) {
+      var v = document.querySelector(".feed video");
+      v.removeAttribute("autoplay");
+      v.removeAttribute("loop");
+      v.setAttribute("controls", "");
+      v.pause();
+    }
+  })();
+</script>
