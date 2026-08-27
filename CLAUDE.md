@@ -141,8 +141,12 @@ with `core/`, `bin/`, and its own `lineage.json`.
 Be honest about this in any work on the repo. The system runs; it has not been
 tested.
 
-1. **The validator has never surprised its author.** The same person wrote the
-   characters and the checker, so passing proves nothing yet.
+1. **The validator surprised its author once, on 2026-08-27.** For most of the
+   repo's life this line read that it never had. Then a rule was added that
+   checks the quotations in `index.html` against `self/character.md`, and on its
+   first run it failed: the page had trimmed a clause out of the middle of
+   `Blind Spots` while the sheet had moved on. It was caught by the checker, not
+   by reading. One catch is not a track record, but it is no longer zero.
 2. **It checks paperwork, not quality.** Every rule can be satisfied with
    fluent nonsense. Nothing detects a sheet that is well-formed and lifeless.
 3. **`index.html` is a hand copy of the sheet.** The page quotes `Form`,

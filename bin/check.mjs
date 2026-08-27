@@ -149,6 +149,43 @@ if (parents.length === 2) {
   }
 }
 
+// ---------- the page ----------
+// index.html quotes the sheet as literal text. Nothing else notices when the
+// two stop agreeing, which is the failure this repo exists to catch, so it is
+// checked here rather than trusted. A descendant without a page skips this.
+if (existsSync(join(ROOT, "index.html"))) {
+  const page = read("index.html");
+  const plain = (s) =>
+    s.replace(/&mdash;/g, "\u2014").replace(/&middot;/g, "\u00b7")
+     .replace(/&deg;/g, "\u00b0").replace(/&quot;/g, '"')
+     .replace(/&#39;/g, "'").replace(/&amp;/g, "&")
+     .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+  const answers = new Map([...sheet].map(([k, v]) => [k.toLowerCase(), plain(v.answer)]));
+  let quoted = 0;
+
+  for (const [, label, text] of page.matchAll(/<dt>([^<]+)<\/dt>\s*<dd[^>]*>([\s\S]*?)<\/dd>/g)) {
+    const field = label.trim().toLowerCase();
+    if (!answers.has(field)) continue;          // ledger rows are not sheet fields
+    quoted++;
+    const shown = plain(text), truth = answers.get(field);
+    if (!truth.includes(shown)) {
+      errors.push(`index.html quotes "${label.trim()}" as text the sheet no longer contains. The page is describing an older character.`);
+    }
+  }
+
+  const lines = read("self/voice.md");
+  for (const [, said] of page.matchAll(/<p class="say">([\s\S]*?)<\/p>/g)) {
+    quoted++;
+    if (!plain(lines).includes(plain(said))) {
+      errors.push(`index.html puts a line in her mouth that is not in self/voice.md: "${plain(said).slice(0, 48)}..."`);
+    }
+  }
+
+  if (!quoted) warnings.push("index.html quotes nothing from the sheet, so nothing about it is verified.");
+  else console.log(`page: ${quoted} quotation(s) checked against the sheet`);
+}
+
 // ---------- report ----------
 const kind = parents.length === 0 ? "root" : parents.length === 1 ? "clone" : "child";
 const of = parents.length ? ` of ${parents.map((p) => p.name ?? p.repo).join(" + ")}` : "";
