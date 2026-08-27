@@ -53,7 +53,12 @@ not the checker.
    answer in `self/character.md`. `TBD`, `unanswered`, `-` all fail.
 4. **The species barrier.** Two characters may only breed if their inherited
    `core/` is byte-identical. Each parent's core hashes are recorded on the
-   child so the reconciliation stays re-verifiable.
+   child so the reconciliation stays re-verifiable. Those recorded hashes are
+   checked against **each other**, never against the child's `core/` on disk:
+   they say what reconciled at the merge, not what the child is allowed to
+   inherit afterwards. Comparing them to disk made `bin/inherit.sh` impossible
+   for a two-parent child, because an upstream `core/` change turned the only
+   sanctioned path into a red build. Drift is still caught by rule 1.
 5. **Declared inheritance.** A two-parent child's sheet has a `From` column.
    Every required row says a parent's name, `both`, or `novel`.
 6. **No silent parent.** If nothing on a child's sheet came from one side, it

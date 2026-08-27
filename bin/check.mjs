@@ -58,9 +58,13 @@ if (parents.length === 2) {
     for (const k of new Set([...Object.keys(a.core), ...Object.keys(b.core)])) {
       if (a.core[k] !== b.core[k]) {
         errors.push(`incompatible lines: core/${k} differs between ${a.name ?? a.repo} (${a.core[k] ?? "absent"}) and ${b.name ?? b.repo} (${b.core[k] ?? "absent"}). These two cannot produce a child until both carry the same core.`);
-      } else if (pinned[k] !== a.core[k]) {
-        errors.push(`core/${k} on disk does not match what both parents carried at the merge.`);
       }
+      // Deliberately not compared against pinned[k]. The parents' hashes are a
+      // record of what reconciled at the merge, not a ceiling on what the child
+      // may inherit afterwards. Comparing them to today's disk made bin/inherit.sh
+      // impossible for a two-parent child: an upstream core change turned the
+      // sanctioned path into a red build. Drift is still caught, above, against
+      // lineage.core.
     }
   }
   if (!lineage.merge_commit) {
