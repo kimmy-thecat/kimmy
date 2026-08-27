@@ -4,8 +4,12 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-REPO=$(node -p "require('./lineage.json').parent?.repo || ''")
-BRANCH=$(node -p "require('./lineage.json').parent?.branch || 'main'")
+# parents: [] root, [a] clone, [a,b] child. The old single-parent shape still works.
+# Two parents carry byte-identical core (the species barrier), so either one is
+# a valid source; the first with a repo is used.
+UP="const l=require('./lineage.json'); const ps=l.parents ?? (l.parent ? [l.parent] : []); const p=ps.find(p=>p&&p.repo)||{};"
+REPO=$(node -p "$UP p.repo||''")
+BRANCH=$(node -p "$UP p.branch||'main'")
 [ -z "$REPO" ] && { echo "This is the root of the line: nothing upstream to inherit."; exit 0; }
 
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
@@ -25,7 +29,9 @@ node -e '
   l.core={}; 
   for (const f of fs.readdirSync("core").filter(f=>f.endsWith(".md")).sort())
     l.core[f]=createHash("sha256").update(fs.readFileSync("core/"+f)).digest("hex").slice(0,16);
-  l.parent.ref=process.argv[1]; l.inherited_at=new Date().toISOString().slice(0,10);
+  const ps=l.parents ?? (l.parent ? [l.parent] : []);
+  const p=ps.find(p=>p&&p.repo); if (p) p.ref=process.argv[1];
+  l.inherited_at=new Date().toISOString().slice(0,10);
   fs.writeFileSync("lineage.json", JSON.stringify(l,null,2)+"\n");
 ' "$REF"
 
