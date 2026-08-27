@@ -150,6 +150,40 @@ Two cheap experiments, both able to fail:
   is still recognisable. If it turns to mush, the recombination rules are wrong,
   and that is the useful finding.
 
+### Run 1 of the first experiment, 2026-08-27
+
+Three writers answered the same five prompts, none of which appear anywhere in
+the repo: Kimmy's full sheet plus `voice.md`, a control told only "you are a
+robot cat named Kimmy", and Kimmy's pre-robot sheet. Two blind judges then read
+the answers with the labels stripped.
+
+- **The judge picked the wrong one, at 80% confidence.** It named the control as
+  the sheeted writer, reasoning that the repeated refusal structure in 4 of its
+  5 answers was someone discharging a list. That uniformity arose without a
+  sheet.
+- **Its substantive reads went the other way.** Unprompted, it called the
+  sheeted writer the better-written of the two and identified the control as
+  the one behaving like an assistant, citing the control's "Yes. Eight, every
+  night" to a request for a daily reminder. Both sheeted runs refused that
+  request; the control took it.
+- **The result is contaminated.** Two of the five sheeted answers were lifted
+  almost verbatim from `voice.md`, including the line the judge praised most.
+  Some of "the sheet works" is "the author's own lines are good". Rerun without
+  `voice.md` in the writer's hands.
+- **The sheet contradicts itself, and the test found it.** Asked for a daily
+  8pm reminder, the robot run refused by will and the cat run refused by
+  incapacity. Both are on the sheet: `Tell` and `Refusals` describe someone who
+  withholds what she has, `Blind Spots` describes someone with no model of a
+  schedule at all. Won't and can't are different people. `check.mjs` cannot see
+  this and never will.
+- **On the body change**, the second judge put the two sheets at 80% the same
+  person, and located the divergence at exactly that won't/can't split rather
+  than at the metal. Run-to-run variance is not ruled out: this is one sample.
+
+The honest summary is that the premise survived its first contact with
+evidence, and the sheet has a hole in it that no amount of validating would
+have found.
+
 ## Sources
 
 - `https://github.com/psql/biscotti` — the character bible this reacts to
