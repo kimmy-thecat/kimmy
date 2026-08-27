@@ -1,0 +1,34 @@
+{
+  "name": "suri",
+  "generation": 1,
+  "parents": [
+    {
+      "name": "kimmy",
+      "repo": "/tmp/tmp.LMm5ZF9B6I/a",
+      "branch": "main",
+      "ref": "",
+      "core": {
+        "fields.md": "aa851e352550c4fa",
+        "practice.md": "f2c8f823bc492aa5",
+        "principles.md": "1d7c7eb31093601b"
+      }
+    },
+    {
+      "name": "tero",
+      "repo": "/tmp/tmp.LMm5ZF9B6I/b",
+      "branch": "main",
+      "ref": "",
+      "core": {
+        "fields.md": "aa851e352550c4fa",
+        "practice.md": "f2c8f823bc492aa5",
+        "principles.md": "1d7c7eb31093601b"
+      }
+    }
+  ],
+  "merge_commit": "5859bcda1c7e3cd4a5bca88fb6bdcf36cb79dca8",
+  "core": {
+    "fields.md": "aa851e352550c4fa",
+    "practice.md": "f2c8f823bc492aa5",
+    "principles.md": "1d7c7eb31093601b"
+  }
+}
