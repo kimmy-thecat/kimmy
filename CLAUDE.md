@@ -21,6 +21,10 @@ core/            inherited from upstream. principles, practice, field schema
 self/            this character's own. never overwritten by upstream
   character.md     the answered field sheet
   voice.md         three tests: compliment, hostile prompt, unanswerable question
+  appearance.md    visual canon. a note, not a field. the sheet outranks it
+  *.webp           reference frames, passed to image models as references
+index.html       the public page. one hand-written static file, no build step,
+                 no dependencies. do not turn this into a site generator
 lineage.json     parents, upstream commits, and a hash of every core file
 log.md           what the character absorbed, and when
 bin/check.mjs    the validator. no dependencies. exit 1 on error
@@ -141,7 +145,13 @@ tested.
    characters and the checker, so passing proves nothing yet.
 2. **It checks paperwork, not quality.** Every rule can be satisfied with
    fluent nonsense. Nothing detects a sheet that is well-formed and lifeless.
-3. **The `novel >= 2` threshold is arbitrary.** Suri is 11/15 `both`. Breeding
+3. **`index.html` is a hand copy of the sheet.** The page quotes `Form`,
+   `Tell`, `Refusals` and the rest as literal text. Nothing checks that those
+   quotations still match `self/character.md`, so editing the sheet silently
+   leaves the page describing an older character. This is the exact failure the
+   repo exists to catch, reintroduced one directory up from `core/`, and it is
+   recorded here rather than quietly tolerated.
+4. **The `novel >= 2` threshold is arbitrary.** Suri is 11/15 `both`. Breeding
    blends with blends is likely to average out to nothing by generation three.
    The threshold was picked, not derived.
 
