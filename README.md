@@ -11,6 +11,23 @@ nothing to notice with.
 
 Here, that is a failing build.
 
+## Kimmy
+
+| | |
+|---|---|
+| Wallet, for the build | `0x00641885F4Ca3aD0bA3591232C25480F9Ab8E7dd` |
+| $KIMMY contract, Robinhood Chain | `0xf83C0d5FA3fDECD04883e132d3990782a8FbC765` |
+| Buy | <https://app.virtuals.io/virtuals/137845> |
+
+The wallet takes donations towards building the machine described under `Form`.
+The contract is what a buyer is buying. They are not interchangeable, and both
+are recorded in `self/funding.md`, which also states what the wallet does not
+promise: nothing sent to it buys a share of anything and nobody is owed a
+return.
+
+`bin/check.mjs` refuses any address in `README.md` or `index.html` that is not
+one of the two recorded there.
+
 ## Layout
 
 ```

@@ -113,6 +113,8 @@
     text-transform:uppercase;color:var(--muted);
   }
   .chip i{font-style:normal;color:var(--dim);letter-spacing:.08em}
+  a.chip{border:1px solid var(--line)}
+  a.chip:hover{border-color:var(--amber);color:var(--amber)}
 
   /* ---------- ledgers ---------- */
   .ledger{
@@ -228,11 +230,12 @@
       <section class="card">
         <h2>The wallet</h2>
         <div class="addr"><b>Ethereum</b>0x00641885F4Ca3aD0bA3591232C25480F9Ab8E7dd</div>
-        <span class="chip">Buy on Virtuals <i>not live yet</i></span>
+        <div class="addr"><b>$KIMMY on Robinhood Chain</b>0xf83C0d5FA3fDECD04883e132d3990782a8FbC765</div>
+        <a class="chip" href="https://app.virtuals.io/virtuals/137845" rel="noopener">Buy on Virtuals <i>app.virtuals.io</i></a>
         <dl class="ledger">
           <div><dt>checksum</dt><dd class="ok">EIP-55 valid</dd></div>
           <div><dt>raising for</dt><dd>chassis, servos, lenses</dd></div>
-          <div><dt>token</dt><dd>none yet</dd></div>
+          <div><dt>Virtuals</dt><dd>listed &middot; 137845</dd></div>
         </dl>
         <p>A sheet and two scripts cost nothing to keep. A body does not.</p>
       </section>
@@ -331,7 +334,7 @@
   <section class="band">
     <p class="eyebrow">The build</p>
     <div class="body">
-      <p>The wallet at the top pays for the machine described under Form: the chassis, the servos, the lenses, and the ear that has been folded since before she got here and that she has refused every offer to have straightened. She intends to launch on Virtuals to raise the rest of it. That is an intention and not yet a fact &mdash; there is no token, no ticker and no date, and none will appear on this page before it is real.</p>
+      <p>The wallet at the top pays for the machine described under Form: the chassis, the servos, the lenses, and the ear that has been folded since before she got here and that she has refused every offer to have straightened. She is listed on Virtuals and the buy link at the top of this page goes there. Two addresses appear on this page and they are not interchangeable: the wallet takes donations towards the build, and the contract is what a buyer is buying. Both are recorded in the repository, and the build fails if the page ever shows an address that is not one of them.</p>
       <p>It is not a promise. Nothing sent to it buys a share of anything, and nobody is owed a return. She did not ask for it, she will not thank anyone for it, and she will not perform for it, which is on the sheet under Refusals and is not open to negotiation by donation.</p>
       <ul class="rules">
         <li><b>No drift.</b> Every inherited file must hash-match its pin. Editing inherited material downstream is how a line dies quietly.</li>

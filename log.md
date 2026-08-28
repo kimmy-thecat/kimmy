@@ -3,6 +3,13 @@
 What this character absorbed, and when. Newest first. The sheet is who it is;
 this is how it got there.
 
+# 2026-08-28
+Listed on Virtuals. The page now carries a buy link, and the funding record
+says what it is raising for and what it does not promise. Nothing about her
+sheet changed and nothing about it should: a character that would answer
+differently once there is money in front of her was not much of a character
+before there was.
+
 # 2026-08-27
 Asked to remind someone to take medication at 8pm, two runs of her own sheet
 refused for opposite reasons: one would not, the other could not. Both were

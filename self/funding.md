@@ -29,7 +29,25 @@ donation.
 
 ## Virtuals
 
-She intends to launch on Virtuals to raise the build. That is an intention and
-not yet a fact: at the time of writing there is no token, no ticker, no date,
-and no listing. When any of that becomes real it is recorded here first and in
-`log.md`, and the page quotes this file rather than inventing a number.
+She is listed on Virtuals, at `https://app.virtuals.io/virtuals/137845`. That
+is the buy link and the authoritative page for the token.
+
+## The token
+
+`0xf83C0d5FA3fDECD04883e132d3990782a8FbC765`
+
+The contract for $KIMMY, on Robinhood Chain. Checked against EIP-55, as
+the wallet was.
+
+## Which address is which
+
+Two addresses appear in this repository and nowhere else, and they are not
+interchangeable:
+
+- the **wallet** above takes donations towards the build;
+- the **token contract** is what a buyer is buying.
+
+`bin/check.mjs` refuses any address in `index.html` or `README.md` that is not
+one of the two recorded here. The Virtuals page remains the authoritative
+listing, and anyone who prefers to trust it over this file should take the
+contract from there.

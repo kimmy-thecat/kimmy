@@ -199,20 +199,22 @@ if (existsSync(join(ROOT, "index.html"))) {
   // An address is the one thing on this page that cannot be corrected after the
   // fact: money sent to a mistyped address is gone. It is recorded once, in
   // self/funding.md, and the page may only repeat it.
-  const onPage = [...new Set([...page.matchAll(/0x[0-9a-fA-F]{40}/g)].map((m) => m[0]))];
+  const surfaces = [page];
+  if (existsSync(join(ROOT, "README.md"))) surfaces.push(read("README.md"));
+  const onPage = [...new Set(surfaces.flatMap((t) => [...t.matchAll(/0x[0-9a-fA-F]{40}/g)].map((m) => m[0])))];
   if (onPage.length) {
     if (!existsSync(join(ROOT, "self", "funding.md"))) {
-      errors.push("index.html publishes an address, but self/funding.md does not exist. An address with no record behind it is not publishable.");
+      errors.push("an address is published, but self/funding.md does not exist. An address with no record behind it is not publishable.");
     } else {
       const funding = read("self/funding.md");
       const recorded = [...new Set([...funding.matchAll(/0x[0-9a-fA-F]{40}/g)].map((m) => m[0]))];
-      if (recorded.length !== 1) {
-        errors.push(`self/funding.md records ${recorded.length} addresses. Exactly one is expected, so that there is never a question of which is hers.`);
+      if (!recorded.length) {
+        errors.push("self/funding.md records no address, so nothing published can be checked against it.");
       }
       for (const addr of onPage) {
         quoted++;
         if (!recorded.includes(addr)) {
-          errors.push(`index.html publishes ${addr}, which is not the address in self/funding.md. One of the two is wrong and money would pay for it.`);
+          errors.push(`${addr} is published but is not recorded in self/funding.md. One of the two is wrong and money would pay for it.`);
         }
       }
     }
