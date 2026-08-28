@@ -1,4 +1,4 @@
-# Character OS
+# KIMMY OS
 
 A character is a versioned artifact with a parent. This repo holds one
 character and enforces its membership in a line.
