@@ -23,6 +23,8 @@ self/            this character's own. never overwritten by upstream
   voice.md         three tests: compliment, hostile prompt, unanswerable question
   appearance.md    visual canon. a note, not a field. the sheet outranks it
   narration.md     what she says over the night feed. check.mjs enforces it
+  funding.md       the wallet address and what it is for. the page may only
+                   repeat it, never introduce one
   *.webp           reference frames, passed to image models as references
   outside-long.mp4 the night feed. renamed when it changes, to defeat caches
 index.html       the public page. one hand-written static file, no build step,
