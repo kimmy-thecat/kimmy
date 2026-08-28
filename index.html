@@ -1,3 +1,4 @@
+<meta name="virtual-protocol-site-verification" content="af63d053b5f885453d5d2050a85fccd0" />
 <title>Kimmy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -216,8 +217,8 @@
 
   <figure class="feed">
     <div class="hud">
-      <video id="feed" src="self/outside-pan.mp4" autoplay loop muted playsinline
-             aria-label="Night-vision footage looking out through a rain-streaked window into a dark garden. The view holds still, turns slowly across the garden, then snaps back towards the fence. A moth drifts past the glass."></video>
+      <video id="feed" src="self/outside-long.mp4" autoplay loop muted playsinline
+             aria-label="Night-vision footage looking out through a rain-streaked window into a dark garden. Over twenty seconds the view settles, turns slowly across the garden, snaps back towards the fence, drifts to the middle, and snaps away again. A moth crosses the glass and returns. Nothing arrives."></video>
       <canvas id="minimap" width="320" height="320" aria-hidden="true"></canvas>
       <div class="ticker" id="ticker" aria-live="polite" aria-label="What she is saying while she watches"></div>
     </div>
@@ -411,9 +412,11 @@
   setInterval(tick, 1000);
 
   // ---- where she is looking, keyed to the loop ----------------------------
-  // Degrees off the window, negative to the left. The beats match the footage:
-  // hold, turn left across the garden, hold, snap right, settle.
-  var BEATS = [[0,0],[1.4,0],[3.4,-34],[5.0,-34],[5.6,26],[8.0,24]];
+  // Degrees off the window, negative to the left. Generated from the same table
+  // that cut the footage, so the sweep and the crop are one movement: settle,
+  // turn left across the garden, hold, snap right to the fence, drift back,
+  // snap left again without warning, settle.
+  var BEATS = [[0,0],[2,0],[4.5,-34],[7,-34],[7.6,26],[10.5,26],[12.5,0],[14.5,0],[15.1,-24],[17.5,-24],[20,0]];
   var heading = function (t) {
     for (var i = 1; i < BEATS.length; i++) {
       if (t <= BEATS[i][0]) {
