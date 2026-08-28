@@ -203,6 +203,35 @@ The honest summary is that the premise survived its first contact with
 evidence, and the sheet has a hole in it that no amount of validating would
 have found.
 
+### Run 2, clean and counterbalanced, 2026-08-28
+
+Run 1 was contaminated and judged by one reader, so it was rerun properly. The
+writers got `self/character.md` pasted inline and nothing else: no `voice.md`,
+no filesystem, so no canned lines could be copied. The same five prompts were
+used. Six judges read the answers blind, three with the sheeted writer labelled
+X and three with the identical texts relabelled so the sheeted writer was Y.
+
+- **Six out of six identified the sheeted writer.** The label was swapped
+  halfway, so this is not the order bias that run 1 could not rule out: in run 1
+  the single judge also answered "X", and there X was the control.
+- **They were not confident: 60, 60, 65, 65, 65, 65 per cent.** Every one of
+  them volunteered that the two were close, and three said outright that being
+  wrong would not surprise them. The finding is a direction, not a margin.
+- **They converged on the same evidence.** What gave the sheet away was
+  unrequested concrete demand -- "I want the box open at both ends and I want it
+  on the seat, not the boot" -- and refusal stated as a known incapacity rather
+  than as a principle. Both are shapes the `Blind Spots` and `Tell` fields
+  produce and that a name alone does not.
+- **The control was the one caught sounding like an assistant.** Its refusal of
+  a daily reminder was justified by the user's welfare, which several judges
+  named as a helpfulness reflex wearing a refusal.
+- **The sheet did not buy better writing.** Asked which was the better
+  character irrespective of the sheet, the judges split two to one *against* it.
+  Detectable and better are different claims, and only the first has support.
+- Run 1's discriminator did not survive. There the control agreed to the daily
+  reminder and fell out of character immediately; here it refused, unprompted.
+  A single test item carried run 1 and it was luck.
+
 ## Sources
 
 - `https://github.com/psql/biscotti` — the character bible this reacts to
