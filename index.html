@@ -216,14 +216,14 @@
 
   <figure class="feed">
     <div class="hud">
-      <video id="feed" src="self/outside.mp4" autoplay loop muted playsinline
+      <video id="feed" src="self/outside-pan.mp4" autoplay loop muted playsinline
              aria-label="Night-vision footage looking out through a rain-streaked window into a dark garden. The view holds still, turns slowly across the garden, then snaps back towards the fence. A moth drifts past the glass."></video>
       <canvas id="minimap" width="320" height="320" aria-hidden="true"></canvas>
       <div class="ticker" id="ticker" aria-live="polite" aria-label="What she is saying while she watches"></div>
     </div>
     <figcaption class="strip">
       <span class="live">Cam 0 &middot; her eyes</span>
-      <span class="now"><time id="now">--:--:--</time> local</span>
+      <span class="now"><time id="now">--:--:--</time> UTC</span>
     </figcaption>
   </figure>
 
@@ -398,12 +398,14 @@
                   function (n) { return n.textContent; });
 
   var pad = function (n) { return (n < 10 ? "0" : "") + n; };
-  var hhmm = function (d) { return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
+  var hhmm = function (d) { return pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes()); };
 
   // ---- the clock is the one genuinely live thing here ---------------------
+  // Read in UTC, not the viewer's zone: the footage is one night in one place,
+  // and a timestamp that changes with who is looking is not a record of it.
   var tick = function () {
     var d = new Date();
-    clock.textContent = hhmm(d) + ":" + pad(d.getSeconds());
+    clock.textContent = hhmm(d) + ":" + pad(d.getUTCSeconds());
   };
   tick();
   setInterval(tick, 1000);

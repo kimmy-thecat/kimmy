@@ -22,7 +22,9 @@ self/            this character's own. never overwritten by upstream
   character.md     the answered field sheet
   voice.md         three tests: compliment, hostile prompt, unanswerable question
   appearance.md    visual canon. a note, not a field. the sheet outranks it
+  narration.md     what she says over the night feed. check.mjs enforces it
   *.webp           reference frames, passed to image models as references
+  outside-pan.mp4  the night feed. renamed when it changes, to defeat caches
 index.html       the public page. one hand-written static file, no build step,
                  no dependencies. do not turn this into a site generator
 lineage.json     parents, upstream commits, and a hash of every core file
